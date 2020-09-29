@@ -15,6 +15,7 @@ public class Element : MonoBehaviour
     public int row;
     public int targetX;
     public int targetY;
+    public bool isMatched = false;
 
 
     // Start is called before the first frame update
@@ -30,6 +31,13 @@ public class Element : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        FindMatches();
+        if (isMatched)
+        {
+            SpriteRenderer sprite = GetComponent<SpriteRenderer>();
+            sprite.color = new Color(0f, 0f, 0f, .2f);
+        }
+
         targetX = column;
         targetY = row;
         if(Mathf.Abs(targetX - transform.position.x) > .1f)
@@ -109,6 +117,35 @@ public class Element : MonoBehaviour
             otherElement = board.board[column, row - 1];
             otherElement.GetComponent<Element>().row += 1;
             row -= 1;
+        }
+    }
+
+    void FindMatches()
+    {
+        if(column > 0 && column < board.width - 1)
+        {
+            GameObject leftElement1 = board.board[column - 1, row];
+            GameObject rightElement1 = board.board[column + 1, row];
+
+            if(leftElement1.tag.Equals(this.gameObject.tag) && rightElement1.tag.Equals(this.gameObject.tag))
+            {
+                leftElement1.GetComponent<Element>().isMatched = true;
+                rightElement1.GetComponent<Element>().isMatched = true;
+                isMatched = true;
+            }
+        }
+
+        if (row > 0 && row < board.height - 1)
+        {
+            GameObject upElement1 = board.board[column, row + 1];
+            GameObject downElement1 = board.board[column, row - 1];
+
+            if (upElement1.tag.Equals(this.gameObject.tag) && downElement1.tag.Equals(this.gameObject.tag))
+            {
+                upElement1.GetComponent<Element>().isMatched = true;
+                downElement1.GetComponent<Element>().isMatched = true;
+                isMatched = true;
+            }
         }
     }
 }
