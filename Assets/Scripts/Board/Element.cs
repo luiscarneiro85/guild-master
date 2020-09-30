@@ -10,9 +10,13 @@ public class Element : MonoBehaviour
     private GameObject otherElement;
     private FillBoard board;
     private float swiptSpeed = .4f;
+
+    [Header("Board Variables")]
     public float swipeAngle = 0;
     public int column;
     public int row;
+    public int previousColumn;
+    public int previousRow;
     public int targetX;
     public int targetY;
     public bool isMatched = false;
@@ -26,6 +30,8 @@ public class Element : MonoBehaviour
         targetY = (int)transform.position.y;
         row = targetY;
         column = targetX;
+        previousColumn = column;
+        previousRow = row;
     }
 
     // Update is called once per frame
@@ -90,14 +96,14 @@ public class Element : MonoBehaviour
 
     void MoveElements()
     {
-        if(swipeAngle > -45 && swipeAngle <= 45 && column < board.width)
+        if(swipeAngle > -45 && swipeAngle <= 45 && column < board.width - 1)
         {
             //Right swipe
             otherElement = board.board[column + 1, row];
             otherElement.GetComponent<Element>().column -= 1;
             column += 1;
         }
-        else if (swipeAngle > 45 && swipeAngle <= 135 && row < board.height)
+        else if (swipeAngle > 45 && swipeAngle <= 135 && row < board.height - 1)
         {
             //Up swipe
             otherElement = board.board[column, row + 1];
@@ -118,6 +124,8 @@ public class Element : MonoBehaviour
             otherElement.GetComponent<Element>().row += 1;
             row -= 1;
         }
+
+        StartCoroutine(CheckMove());
     }
 
     void FindMatches()
@@ -146,6 +154,23 @@ public class Element : MonoBehaviour
                 downElement1.GetComponent<Element>().isMatched = true;
                 isMatched = true;
             }
+        }
+    }
+
+    public IEnumerator CheckMove()
+    {
+        yield return new WaitForSeconds(.5f);
+        if(otherElement != null)
+        {
+            if(!isMatched && !otherElement.GetComponent<Element>().isMatched)
+            {
+                otherElement.GetComponent<Element>().row = row;
+                otherElement.GetComponent<Element>().column = column;
+                row = previousRow;
+                column = previousColumn;
+            }
+
+            otherElement = null;
         }
     }
 }
