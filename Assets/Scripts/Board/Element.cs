@@ -20,6 +20,8 @@ public class Element : MonoBehaviour
     public int targetX;
     public int targetY;
     public bool isMatched = false;
+    public float swipeResist = 1f;
+
 
 
     // Start is called before the first frame update
@@ -38,6 +40,7 @@ public class Element : MonoBehaviour
     void Update()
     {
         FindMatches();
+
         if (isMatched)
         {
             SpriteRenderer sprite = GetComponent<SpriteRenderer>();
@@ -76,7 +79,6 @@ public class Element : MonoBehaviour
     void OnMouseDown()
     {
         firstTouchPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        //Debug.Log(firstTouchPos);
     }
 
     void OnMouseUp()
@@ -87,11 +89,14 @@ public class Element : MonoBehaviour
 
     void CalculateAngle()
     {
-        swipeAngle = Mathf.Atan2(
-            finalTouchPos.y - firstTouchPos.y,
-            finalTouchPos.x - firstTouchPos.x) * 180 / Mathf.PI;
-        //Debug.Log(swipeAngle);
-        MoveElements();
+        if(Mathf.Abs(finalTouchPos.y - firstTouchPos.y) > swipeResist || Mathf.Abs(finalTouchPos.x - firstTouchPos.x) > swipeResist)
+        {
+            swipeAngle = Mathf.Atan2(
+                finalTouchPos.y - firstTouchPos.y,
+                finalTouchPos.x - firstTouchPos.x) * 180 / Mathf.PI;
+            MoveElements();
+        }
+
     }
 
     void MoveElements()
@@ -135,11 +140,14 @@ public class Element : MonoBehaviour
             GameObject leftElement1 = board.board[column - 1, row];
             GameObject rightElement1 = board.board[column + 1, row];
 
-            if(leftElement1.tag.Equals(this.gameObject.tag) && rightElement1.tag.Equals(this.gameObject.tag))
+            if(leftElement1 != null && rightElement1 != null)
             {
-                leftElement1.GetComponent<Element>().isMatched = true;
-                rightElement1.GetComponent<Element>().isMatched = true;
-                isMatched = true;
+                if (leftElement1.tag.Equals(this.gameObject.tag) && rightElement1.tag.Equals(this.gameObject.tag))
+                {
+                    leftElement1.GetComponent<Element>().isMatched = true;
+                    rightElement1.GetComponent<Element>().isMatched = true;
+                    isMatched = true;
+                }
             }
         }
 
@@ -148,11 +156,14 @@ public class Element : MonoBehaviour
             GameObject upElement1 = board.board[column, row + 1];
             GameObject downElement1 = board.board[column, row - 1];
 
-            if (upElement1.tag.Equals(this.gameObject.tag) && downElement1.tag.Equals(this.gameObject.tag))
+            if(upElement1 != null && downElement1 != null)
             {
-                upElement1.GetComponent<Element>().isMatched = true;
-                downElement1.GetComponent<Element>().isMatched = true;
-                isMatched = true;
+                if (upElement1.tag.Equals(this.gameObject.tag) && downElement1.tag.Equals(this.gameObject.tag))
+                {
+                    upElement1.GetComponent<Element>().isMatched = true;
+                    downElement1.GetComponent<Element>().isMatched = true;
+                    isMatched = true;
+                }
             }
         }
     }
@@ -168,9 +179,10 @@ public class Element : MonoBehaviour
                 otherElement.GetComponent<Element>().column = column;
                 row = previousRow;
                 column = previousColumn;
+
             }
 
-            otherElement = null;
+           otherElement = null;
         }
     }
 }
