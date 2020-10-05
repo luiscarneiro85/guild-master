@@ -9,7 +9,7 @@ public class Element : MonoBehaviour
     private Vector2 targetPosition;
     private GameObject otherElement;
     private FillBoard board;
-    private float swiptSpeed = .4f;
+    private float swipeSpeed = .4f;
 
     [Header("Board Variables")]
     public float swipeAngle = 0;
@@ -28,12 +28,12 @@ public class Element : MonoBehaviour
     void Start()
     {
         board = FindObjectOfType<FillBoard>();
-        targetX = (int)transform.position.x;
-        targetY = (int)transform.position.y;
-        row = targetY;
-        column = targetX;
-        previousColumn = column;
-        previousRow = row;
+        //targetX = (int)transform.position.x;
+        //targetY = (int)transform.position.y;
+        //row = targetY;
+        //column = targetX;
+        //previousColumn = column;
+        //previousRow = row;
     }
 
     // Update is called once per frame
@@ -53,26 +53,32 @@ public class Element : MonoBehaviour
         {
             //Move towards the target
             targetPosition = new Vector2(targetX, transform.position.y);
-            transform.position = Vector2.Lerp(transform.position, targetPosition, swiptSpeed);
+            transform.position = Vector2.Lerp(transform.position, targetPosition, swipeSpeed);
+            if(board.board[column, row] != this.gameObject)
+            {
+                board.board[column, row] = this.gameObject;
+            }
         }
         else
         {
             //Directly set the position
             targetPosition = new Vector2(targetX, transform.position.y);
-            transform.position = targetPosition;
-            board.board[column, row] = this.gameObject;
+            transform.position = targetPosition;    
         }
 
         if (Mathf.Abs(targetY - transform.position.y) > .1f)
         {
             targetPosition = new Vector2(transform.position.x, targetY);
-            transform.position = Vector2.Lerp(transform.position, targetPosition, swiptSpeed);
+            transform.position = Vector2.Lerp(transform.position, targetPosition, swipeSpeed);
+            if (board.board[column, row] != this.gameObject)
+            {
+                board.board[column, row] = this.gameObject;
+            }
         }
         else
         {
             targetPosition = new Vector2(transform.position.x, targetY);
             transform.position = targetPosition;
-            board.board[column, row] = this.gameObject;
         }
     }
 
@@ -105,6 +111,8 @@ public class Element : MonoBehaviour
         {
             //Right swipe
             otherElement = board.board[column + 1, row];
+            previousColumn = column;
+            previousRow = row;
             otherElement.GetComponent<Element>().column -= 1;
             column += 1;
         }
@@ -112,6 +120,8 @@ public class Element : MonoBehaviour
         {
             //Up swipe
             otherElement = board.board[column, row + 1];
+            previousColumn = column;
+            previousRow = row;
             otherElement.GetComponent<Element>().row -= 1;
             row += 1;
         }
@@ -119,6 +129,8 @@ public class Element : MonoBehaviour
         {
             //Left swipe
             otherElement = board.board[column - 1, row];
+            previousColumn = column;
+            previousRow = row;
             otherElement.GetComponent<Element>().column += 1;
             column -= 1;
         }
@@ -126,6 +138,8 @@ public class Element : MonoBehaviour
         {
             //Down swipe
             otherElement = board.board[column, row - 1];
+            previousColumn = column;
+            previousRow = row;
             otherElement.GetComponent<Element>().row += 1;
             row -= 1;
         }
@@ -181,8 +195,12 @@ public class Element : MonoBehaviour
                 column = previousColumn;
 
             }
+            else
+            {
+                board.DestroyMatches();
+            }
 
-           otherElement = null;
+            otherElement = null;
         }
     }
 }

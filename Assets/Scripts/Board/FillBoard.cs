@@ -6,6 +6,7 @@ public class FillBoard : MonoBehaviour
 {
     public int width;
     public int height;
+    public int offSet;
     public GameObject[] ElementsPrefab;
     public GameObject[,] board;
 
@@ -22,7 +23,7 @@ public class FillBoard : MonoBehaviour
         {
             for (int j = 0; j < height; j++)
             {
-                Vector2 pos = new Vector2(i, j);
+                Vector2 pos = new Vector2(i, j + offSet);
                 int randomElement = Random.Range(0, ElementsPrefab.Length);
 
                 int maxIterations = 0;
@@ -34,6 +35,9 @@ public class FillBoard : MonoBehaviour
 
                 maxIterations = 0;
                 GameObject element = Instantiate(ElementsPrefab[randomElement], pos, Quaternion.identity) as GameObject;
+                element.GetComponent<Element>().row = j;
+                element.GetComponent<Element>().column = i;
+
                 element.transform.parent = this.transform;
                 element.name = string.Format("({0},{1})", i, j);
                 board[i, j] = element;
@@ -66,5 +70,103 @@ public class FillBoard : MonoBehaviour
             }
         }
         return false;
+    }
+
+    private void DestroyMatchesAt(int column, int row)
+    {
+        if(board[column, row].GetComponent<Element>().isMatched)
+        {
+            Destroy(board[column, row]);
+            board[column, row] = null;
+        }
+    }
+
+    public void DestroyMatches()
+    {
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                if(board[i, j] != null)
+                {
+                    DestroyMatchesAt(i, j);
+                }
+            }
+        }
+
+        StartCoroutine(DecreaseRow());
+    }
+
+    private void RefillBoard()
+    {
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                if(board[i, j] == null){
+                    Vector2 tempPosition = new Vector2(i, j + offSet);
+                    int randomElement = Random.Range(0, ElementsPrefab.Length);
+                    GameObject element = Instantiate(ElementsPrefab[randomElement], tempPosition, Quaternion.identity) as GameObject;
+                    board[i, j] = element;
+                    element.GetComponent<Element>().row = j;
+                    element.GetComponent<Element>().column = i;
+                }
+            }
+        }
+    }
+
+    private bool MatchesOnBoard()
+    {
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                if(board[i, j] != null)
+                {
+                    if(board[i, j].GetComponent<Element>().isMatched)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private IEnumerator DecreaseRow()
+    {
+        int nullCount = 0;
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                if(board[i, j] == null)
+                {
+                    nullCount++;
+                }
+                else if(nullCount > 0)
+                {
+                    board[i, j].GetComponent<Element>().row -= nullCount;
+                    board[i, j] = null;
+                }
+            }
+
+            nullCount = 0;
+        }
+        yield return new WaitForSeconds(.4f);
+
+        StartCoroutine(FillBoardCo());
+    }
+
+    private IEnumerator FillBoardCo()
+    {
+        RefillBoard();
+        yield return new WaitForSeconds(.4f);
+
+        while (MatchesOnBoard())
+        {
+            yield return new WaitForSeconds(.4f);
+            DestroyMatches();
+        }
     }
 }
