@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum GameState
+{
+    WAIT,
+    MOVE
+}
+
 public class FillBoard : MonoBehaviour
 {
     public int width;
@@ -9,10 +15,14 @@ public class FillBoard : MonoBehaviour
     public int offSet;
     public GameObject[] ElementsPrefab;
     public GameObject[,] board;
+    public GameState currentState = GameState.MOVE;
+
+    private FindMatches findMatches;
 
     // Start is called before the first frame update
     void Start()
     {
+        findMatches = FindObjectOfType<FindMatches>();
         board = new GameObject[width, height];
         InitilizeBoard();
     }
@@ -76,6 +86,7 @@ public class FillBoard : MonoBehaviour
     {
         if(board[column, row].GetComponent<Element>().isMatched)
         {
+            findMatches.currentMatches.Remove(board[column, row]);
             Destroy(board[column, row]);
             board[column, row] = null;
         }
@@ -161,12 +172,15 @@ public class FillBoard : MonoBehaviour
     private IEnumerator FillBoardCo()
     {
         RefillBoard();
-        yield return new WaitForSeconds(.4f);
+        yield return new WaitForSeconds(.5f);
 
         while (MatchesOnBoard())
         {
-            yield return new WaitForSeconds(.4f);
+            yield return new WaitForSeconds(.5f);
             DestroyMatches();
         }
+
+        yield return new WaitForSeconds(.5f);
+        currentState = GameState.MOVE;
     }
 }

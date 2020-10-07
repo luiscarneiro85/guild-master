@@ -10,6 +10,7 @@ public class Element : MonoBehaviour
     private GameObject otherElement;
     private FillBoard board;
     private float swipeSpeed = .4f;
+    private FindMatches findMatches;
 
     [Header("Board Variables")]
     public float swipeAngle = 0;
@@ -28,6 +29,7 @@ public class Element : MonoBehaviour
     void Start()
     {
         board = FindObjectOfType<FillBoard>();
+        findMatches = FindObjectOfType<FindMatches>();
         //targetX = (int)transform.position.x;
         //targetY = (int)transform.position.y;
         //row = targetY;
@@ -39,7 +41,7 @@ public class Element : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        FindMatches();
+        //FindMatches();
 
         if (isMatched)
         {
@@ -58,6 +60,8 @@ public class Element : MonoBehaviour
             {
                 board.board[column, row] = this.gameObject;
             }
+
+            findMatches.FindAllMatches();
         }
         else
         {
@@ -68,15 +72,19 @@ public class Element : MonoBehaviour
 
         if (Mathf.Abs(targetY - transform.position.y) > .1f)
         {
+            //Move towards the target
             targetPosition = new Vector2(transform.position.x, targetY);
             transform.position = Vector2.Lerp(transform.position, targetPosition, swipeSpeed);
             if (board.board[column, row] != this.gameObject)
             {
                 board.board[column, row] = this.gameObject;
             }
+
+            findMatches.FindAllMatches();
         }
         else
         {
+            //Directly set the position
             targetPosition = new Vector2(transform.position.x, targetY);
             transform.position = targetPosition;
         }
@@ -84,13 +92,19 @@ public class Element : MonoBehaviour
 
     void OnMouseDown()
     {
-        firstTouchPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if(board.currentState == GameState.MOVE)
+        {
+            firstTouchPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        }      
     }
 
     void OnMouseUp()
     {
-        finalTouchPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        CalculateAngle();
+        if (board.currentState == GameState.MOVE)
+        {
+            finalTouchPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            CalculateAngle();
+        }
     }
 
     void CalculateAngle()
@@ -101,6 +115,11 @@ public class Element : MonoBehaviour
                 finalTouchPos.y - firstTouchPos.y,
                 finalTouchPos.x - firstTouchPos.x) * 180 / Mathf.PI;
             MoveElements();
+            board.currentState = GameState.WAIT;
+        }
+        else
+        {
+            board.currentState = GameState.MOVE;
         }
 
     }
@@ -193,7 +212,8 @@ public class Element : MonoBehaviour
                 otherElement.GetComponent<Element>().column = column;
                 row = previousRow;
                 column = previousColumn;
-
+                yield return new WaitForSeconds(.5f);
+                board.currentState = GameState.MOVE;
             }
             else
             {
