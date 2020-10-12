@@ -87,8 +87,9 @@ public class FillBoard : MonoBehaviour
         if(board[column, row].GetComponent<Element>().isMatched)
         {
             findMatches.currentMatches.Remove(board[column, row]);
-            Destroy(board[column, row]);
-            board[column, row] = null;
+            board[column, row].GetComponent<Animator>().SetTrigger("Matched");
+            //Destroy(board[column, row]);
+            //board[column, row] = null;
         }
     }
 
@@ -144,6 +145,11 @@ public class FillBoard : MonoBehaviour
         return false;
     }
 
+    public void StartDecreaseRow()
+    {
+        StartCoroutine(DecreaseRow());
+    }
+
     private IEnumerator DecreaseRow()
     {
         int nullCount = 0;
@@ -172,15 +178,15 @@ public class FillBoard : MonoBehaviour
     private IEnumerator FillBoardCo()
     {
         RefillBoard();
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(.3f);
 
         while (MatchesOnBoard())
         {
-            yield return new WaitForSeconds(.5f);
+            yield return new WaitForSeconds(.3f);
             DestroyMatches();
         }
 
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(.3f);
         currentState = GameState.MOVE;
     }
 }

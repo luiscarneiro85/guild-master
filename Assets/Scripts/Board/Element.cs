@@ -30,12 +30,6 @@ public class Element : MonoBehaviour
     {
         board = FindObjectOfType<FillBoard>();
         findMatches = FindObjectOfType<FindMatches>();
-        //targetX = (int)transform.position.x;
-        //targetY = (int)transform.position.y;
-        //row = targetY;
-        //column = targetX;
-        //previousColumn = column;
-        //previousRow = row;
     }
 
     // Update is called once per frame
@@ -43,11 +37,10 @@ public class Element : MonoBehaviour
     {
         //FindMatches();
 
-        if (isMatched)
-        {
-            SpriteRenderer sprite = GetComponent<SpriteRenderer>();
-            sprite.color = new Color(0f, 0f, 0f, .2f);
-        }
+        //if (isMatched)
+        //{
+
+        //}
 
         targetX = column;
         targetY = row;
@@ -88,6 +81,13 @@ public class Element : MonoBehaviour
             targetPosition = new Vector2(transform.position.x, targetY);
             transform.position = targetPosition;
         }
+    }
+
+    public void DestroyElement()
+    {
+        Destroy(this.gameObject);
+        board.board[column, row] = null;
+        board.GetComponent<FillBoard>().StartDecreaseRow();
     }
 
     void OnMouseDown()
@@ -166,47 +166,12 @@ public class Element : MonoBehaviour
         StartCoroutine(CheckMove());
     }
 
-    void FindMatches()
-    {
-        if(column > 0 && column < board.width - 1)
-        {
-            GameObject leftElement1 = board.board[column - 1, row];
-            GameObject rightElement1 = board.board[column + 1, row];
-
-            if(leftElement1 != null && rightElement1 != null)
-            {
-                if (leftElement1.tag.Equals(this.gameObject.tag) && rightElement1.tag.Equals(this.gameObject.tag))
-                {
-                    leftElement1.GetComponent<Element>().isMatched = true;
-                    rightElement1.GetComponent<Element>().isMatched = true;
-                    isMatched = true;
-                }
-            }
-        }
-
-        if (row > 0 && row < board.height - 1)
-        {
-            GameObject upElement1 = board.board[column, row + 1];
-            GameObject downElement1 = board.board[column, row - 1];
-
-            if(upElement1 != null && downElement1 != null)
-            {
-                if (upElement1.tag.Equals(this.gameObject.tag) && downElement1.tag.Equals(this.gameObject.tag))
-                {
-                    upElement1.GetComponent<Element>().isMatched = true;
-                    downElement1.GetComponent<Element>().isMatched = true;
-                    isMatched = true;
-                }
-            }
-        }
-    }
-
     public IEnumerator CheckMove()
     {
         yield return new WaitForSeconds(.5f);
-        if(otherElement != null)
+        if (otherElement != null)
         {
-            if(!isMatched && !otherElement.GetComponent<Element>().isMatched)
+            if (!isMatched && !otherElement.GetComponent<Element>().isMatched)
             {
                 otherElement.GetComponent<Element>().row = row;
                 otherElement.GetComponent<Element>().column = column;
@@ -223,4 +188,39 @@ public class Element : MonoBehaviour
             otherElement = null;
         }
     }
+
+    //void FindMatches()
+    //{
+    //    if(column > 0 && column < board.width - 1)
+    //    {
+    //        GameObject leftElement1 = board.board[column - 1, row];
+    //        GameObject rightElement1 = board.board[column + 1, row];
+
+    //        if(leftElement1 != null && rightElement1 != null)
+    //        {
+    //            if (leftElement1.tag.Equals(this.gameObject.tag) && rightElement1.tag.Equals(this.gameObject.tag))
+    //            {
+    //                leftElement1.GetComponent<Element>().isMatched = true;
+    //                rightElement1.GetComponent<Element>().isMatched = true;
+    //                isMatched = true;
+    //            }
+    //        }
+    //    }
+
+    //    if (row > 0 && row < board.height - 1)
+    //    {
+    //        GameObject upElement1 = board.board[column, row + 1];
+    //        GameObject downElement1 = board.board[column, row - 1];
+
+    //        if(upElement1 != null && downElement1 != null)
+    //        {
+    //            if (upElement1.tag.Equals(this.gameObject.tag) && downElement1.tag.Equals(this.gameObject.tag))
+    //            {
+    //                upElement1.GetComponent<Element>().isMatched = true;
+    //                downElement1.GetComponent<Element>().isMatched = true;
+    //                isMatched = true;
+    //            }
+    //        }
+    //    }
+    //}
 }

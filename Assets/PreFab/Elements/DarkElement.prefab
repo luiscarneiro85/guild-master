@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5902836855902396209}
   - component: {fileID: 5902836855902396208}
   - component: {fileID: 5902836855902396215}
+  - component: {fileID: 169593333320045881}
   m_Layer: 0
   m_Name: DarkElement
   m_TagString: DarkElement
@@ -112,6 +113,28 @@ MonoBehaviour:
   swipeAngle: 0
   column: 0
   row: 0
+  previousColumn: 0
+  previousRow: 0
   targetX: 0
   targetY: 0
   isMatched: 0
+  swipeResist: 1
+--- !u!95 &169593333320045881
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5902836855902396214}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 926d74df58a18484dbcd7f0a4a1e2ad7, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

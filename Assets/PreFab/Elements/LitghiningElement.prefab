@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6741210074555935040}
   - component: {fileID: 6741210074555935041}
   - component: {fileID: 6741210074555935042}
+  - component: {fileID: 786291752}
   m_Layer: 0
   m_Name: LitghiningElement
   m_TagString: LitghiningElement
@@ -70,7 +71,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300008, guid: 5b7645350d284e04cbb5a1cb3ce4e49e, type: 3}
+  m_Sprite: {fileID: 21300132, guid: 1e02eef8ffde6784491ea07cb176edd7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -112,6 +113,28 @@ MonoBehaviour:
   swipeAngle: 0
   column: 0
   row: 0
+  previousColumn: 0
+  previousRow: 0
   targetX: 0
   targetY: 0
   isMatched: 0
+  swipeResist: 1
+--- !u!95 &786291752
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6741210074555935043}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 56c97951d895cb44fb596e1907d76c50, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
